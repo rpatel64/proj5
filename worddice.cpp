@@ -87,6 +87,37 @@ void residual(vector<string> dice, string word,map<string, vector<string> >&myRg
 	}
 }
 
+struct sol 
+{
+	string value;
+	string prev;
+};
+
+void solution(vector<string> dice, string word, map<string, vector<string> >&mygraph, map<string, vector<string> >&myRgraph)
+{
+	set<string> v; //visited set
+	vector<sol> queue;
+	sol first;
+	first.value = "source";
+	first.prev = "null";
+	queue.push_back(first);
+	for(int i = 0; i < queue.size(); i++)
+	{
+		for(int j = 0; j < mygraph[queue[i].value].size(); j++)
+		{
+			sol temp;
+			temp.value = mygraph[queue[i].value][j];
+			temp.prev = queue[i].value;
+			queue.push_back(temp);
+		}
+	}
+	for(int i = 0; i < queue.size(); i++)
+	{
+		cout << queue[i].value << " " << queue[i].prev << endl;
+	}	
+
+}
+
 int main(int argc, char **argv)
 {
 	vector<string> dice;
@@ -98,4 +129,5 @@ int main(int argc, char **argv)
 	readFile(file1, file2, dice, words);
 	original(dice, words[1], mygraph);
 	residual(dice, words[1], myRgraph);
+	solution(dice, words[1], mygraph, myRgraph);
 }
