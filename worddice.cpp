@@ -94,11 +94,21 @@ struct sol
 
 void solution(vector<string> dice, string word, map<string, vector<string> >&mygraph, map<string, vector<string> >&myRgraph)
 {
+	int solutionCheck = -1;
+
+
+
+
 	while(mygraph["source"].size() != 0)
 	{
+
+		// cout << "source size: " << mygraph["source"].size() << endl;
+		solutionCheck = mygraph["source"].size();
+
 		set<string> v; //visited set
 		vector<sol> queue;
 		sol first;
+
 		first.value = "source";
 		first.prev = "null";
 		queue.push_back(first);
@@ -122,6 +132,7 @@ void solution(vector<string> dice, string word, map<string, vector<string> >&myg
 			}
 			if(sinkCheck) break;
 		}
+
 
 		string to = "sink";
 		string from;
@@ -164,37 +175,77 @@ void solution(vector<string> dice, string word, map<string, vector<string> >&myg
 		}
 		//print(mygraph);
 		//print(myRgraph);
+
+		if(solutionCheck == mygraph["source"].size()) {
+			break;
+		}
+
 	}
+
 }
 
 int main(int argc, char **argv)
 {
 	vector<string> dice;
 	vector<string> words;
+
 	string file1 = argv[1];
 	string file2 = argv[2];
+
 	map<string, vector<string> >mygraph;
 	map<string, vector<string> >myRgraph;
+	bool solutionExists;
+
 	readFile(file1, file2, dice, words);
-	original(dice, words[1], mygraph);
-	residual(dice, words[1], myRgraph);
-	solution(dice, words[1], mygraph, myRgraph);
-	vector<int> sol;
-	sol.resize(dice.size());
-	if(myRgraph["source"].size() == dice.size())
-	{
-		for(int i = 0; i < dice.size(); i++)
-		{
-			int x;
-			string location = myRgraph[dice[i]][0];
-			stringstream ss(location);
-			ss >> x;
-			sol[x] = i;
+
+	for(int currWord = 0; currWord < words.size(); currWord++) {
+		
+		original(dice, words[currWord], mygraph);
+		residual(dice, words[currWord], myRgraph);
+
+		solution(dice, words[currWord], mygraph, myRgraph);
+
+		vector<int> sol;
+
+		sol.resize(dice.size());
+
+
+		// if(solutionExists) {
+			if(myRgraph["source"].size() == dice.size())
+			{
+
+				for(int i = 0; i < dice.size(); i++)
+				{
+					int x;
+					string location = myRgraph[dice[i]][0];
+					stringstream ss(location);
+					ss >> x;
+					sol[x] = i;
+				}
+
+				cout << sol[0];
+				for(int i = 1; i < sol.size(); i++)
+				{
+					cout << "," << sol[i];
+				}
+
+			cout << ": " << words[currWord] << endl;
+			}
+
+		else {
+			cout << "Cannot spell " << words[currWord] <<  endl;
 		}
+
+		// print(myRgraph);
+		// cout << "src size: " << myRgraph["source"].size() << endl;
+		// cout << "sink size: " << myRgraph["sink"].size() << endl;
+		// cout << "dice size: " << dice.size() << endl;
+		// cout << "curr word size: " << words[currWord].size() << endl;
+		// cout << endl;
+
+		mygraph.clear();
+		myRgraph.clear();
+		sol.clear();
 	}
-	for(int i = 0; i < sol.size(); i++)
-	{
-		cout << sol[i] << ",";
-	}
-	cout << ": " << words[1] << endl;
+
 }
