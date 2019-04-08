@@ -96,9 +96,6 @@ void solution(vector<string> dice, string word, map<string, vector<string> >&myg
 {
 	int solutionCheck = -1;
 
-
-
-
 	while(mygraph["source"].size() != 0)
 	{
 
@@ -139,6 +136,7 @@ void solution(vector<string> dice, string word, map<string, vector<string> >&myg
 		//print(mygraph);
 		for(int i = queue.size() - 1; i > -1; i--)
 		{
+			//print(myRgraph);
 			from = queue[i].value;
 			if(from == to && from != "source")
 			{
@@ -153,22 +151,38 @@ void solution(vector<string> dice, string word, map<string, vector<string> >&myg
 				}
 				mygraph[from].push_back(to);
 				bool clearCheck = false;
+				//if(to == "1") cout << from << "--------------------" << endl;
 				if(myRgraph[to].size() > 0)
 				{
 					for(int k = 0; k < myRgraph[to].size(); k++)
 					{
+						//cout << myRgraph[to][k] << from  << endl;
 						if(myRgraph[to][k] == from)
 						{
-							mygraph[to].erase(mygraph[to].begin()+k);
+							myRgraph[to].erase(myRgraph[to].begin()+k);
 							clearCheck = true;
 							break;
 						}
 					}
 				}
+				if(myRgraph[from].size() > 0)
+				{
+					for(int k = 0; k < myRgraph[from].size(); k++)
+					{
+						//cout << myRgraph[to][k] << from  << endl;
+						if(myRgraph[from][k] == to)
+						{
+							myRgraph[from].erase(myRgraph[from].begin()+k);
+							clearCheck = true;
+							break;
+						}
+					}
+				}
+				
 				if(!clearCheck) myRgraph[to].push_back(from);
 			}
 		}
-
+		//print(myRgraph);
 		for(int i = 0; i < queue.size(); i++)
 		{
 		//	cout << queue[i].value << " " << queue[i].prev << endl;
@@ -205,22 +219,38 @@ int main(int argc, char **argv)
 
 		solution(dice, words[currWord], mygraph, myRgraph);
 
+		// cout << "residudal graph val: " << myRgraph["ENG"][0] << endl;
+		// cout << "dice  val: " << dice[0] << endl;
+
 		vector<int> sol;
 
-		sol.resize(dice.size());
-
-
-		// if(solutionExists) {
-			if(myRgraph["source"].size() == dice.size())
+		sol.resize(words[currWord].size());
+			bool correctCheck = true;
+			for(int l = 0; l < words[currWord].size(); l++)
+			{
+				if(myRgraph[to_string(l)].size() != 0)
+				{
+				if(myRgraph[to_string(l)][0]  ==  "sink")
+				{
+					
+				}
+				else correctCheck = false;
+				}
+				else correctCheck = false;
+			}
+			if(correctCheck)
 			{
 
 				for(int i = 0; i < dice.size(); i++)
 				{
+					if(myRgraph[dice[i]].size() != 0)
+					{
 					int x;
 					string location = myRgraph[dice[i]][0];
 					stringstream ss(location);
 					ss >> x;
 					sol[x] = i;
+					}
 				}
 
 				cout << sol[0];
@@ -236,11 +266,11 @@ int main(int argc, char **argv)
 			cout << "Cannot spell " << words[currWord] <<  endl;
 		}
 
-		// print(myRgraph);
-		// cout << "src size: " << myRgraph["source"].size() << endl;
-		// cout << "sink size: " << myRgraph["sink"].size() << endl;
-		// cout << "dice size: " << dice.size() << endl;
-		// cout << "curr word size: " << words[currWord].size() << endl;
+		//print(myRgraph);
+		// // cout << "src size: " << myRgraph["source"].size() << endl;
+		// // cout << "sink size: " << mygraph["sink"].size() << endl;
+		// // cout << "dice size: " << dice.size() << endl;
+		// // cout << "curr word size: " << words[currWord].size() << endl;
 		// cout << endl;
 
 		mygraph.clear();
